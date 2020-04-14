@@ -1,6 +1,8 @@
 *~
 #*
 *.pyc
+env/
 dist/
 build/
 __pycache__/
+HIOAppLanguages.xlsx
