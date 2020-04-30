@@ -166,7 +166,7 @@ class AppLangTranslate:
             english =  self.ws.cell( column=self.english_col, row=row )
             if english.value is not None:
                 cell = self.ws.cell( column=column, row=row ) 
-                data[english.value] = cell.value or ''
+                data[english.value] = cell.value or english.value
 
         try:
             path = self._out_json_file_name( lang.value )
@@ -263,8 +263,12 @@ class AppLangTranslate:
             if cdata == 1:  # cdata.lower() == 'yes':
                 child.text = self._cdata( cell.value or '' )
             else:
-                child.text = cell.value or ''
-
+                if cell.value:
+                   child.text = cell.value
+                else:
+                    english =  self.ws.cell( column=self.english_col, row=row )
+                    child.text = english.value or ''
+ 
         with open( path, 'wb' ) as foutp:
             foutp.write(
                 lxml.etree.tostring(
