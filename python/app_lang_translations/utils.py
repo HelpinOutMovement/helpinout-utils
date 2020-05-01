@@ -261,8 +261,9 @@ class AppLangTranslate:
             cdata = self.ws.cell(
                 column=self.xml_cdata_col, row=row
             ).value or ''
-            if cdata == 1:  # cdata.lower() == 'yes':
-                child.text = self._cdata( cell.value or '' )
+            if cdata == 1 or cdata.lower() == 'yes':
+                if cell.value:
+                    child.text = self._cdata( cell.value )
             else:
                 if cell.value:
                    child.text = cell.value
