@@ -24,8 +24,8 @@ XML_LANG_FILE_NAME = 'strings.xml'
 XML_LANG_ENGLISH_CODE = 'values'
 
 # Names of output zip files
-JSON_ZIP_FILE_NAME = 'ios_langages.zip'
-XML_ZIP_FILE_NAME = 'android_langages.zip'
+JSON_ZIP_FILE_NAME = 'ios_languages.zip'
+XML_ZIP_FILE_NAME = 'android_languages.zip'
 
 # Name of locale file for JSON, containing locale names, and codes
 JSON_LOCALE_FILE_NAME = 'locale.json'
