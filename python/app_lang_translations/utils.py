@@ -146,7 +146,7 @@ class AppLangTranslate:
             except ValueError as e:
                 msg - 'Unable to find "{}" in locale code, or an issue in '
                 'finding the locale name in locale file "{}"'.format(
-                    lang.value, JSON_LOCALE_FINE_NAME
+                    lang.value, JSON_LOCALE_FILE_NAME
                 )
         else:
             msg = 'Missing language name at col. "{}", row "{}"'.format(
@@ -168,10 +168,19 @@ class AppLangTranslate:
 
             english =  self.ws.cell( column=self.english_col, row=row )
             if english.value is not None:
-                cell = self.ws.cell( column=column, row=row ) 
-                key = re.sub(
-                    RE_FMT_SPEC, '', english.value.replace( '.', '' )
-                )
+                cell = self.ws.cell( column=column, row=row )
+
+                cdata = self.ws.cell(
+                    column=self.xml_cdata_col, row=row
+                ).value or ''
+
+                if cdata == 1 or cdata.lower() == 'yes':
+                    key = name
+                else:
+                    key = re.sub(
+                        RE_FMT_SPEC, '', english.value.replace( '.', '' )
+                    )
+
                 data[key] = re.sub(
                     RE_FMT_SPEC, '', cell.value or english.value
                 )
