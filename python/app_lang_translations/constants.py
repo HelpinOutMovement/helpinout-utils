@@ -50,3 +50,6 @@ DEF_LOG_LEVEL = 'ERROR'
 XML_TAG_ROOT = 'resources'
 XML_TAG_STR = 'string'
 XML_ATTR_STR_NAME = "name"
+
+# Regularexpression for format specifiers
+FMT_SPEC_STR = r'%[0-9]+\$.[ ]{0,1}'

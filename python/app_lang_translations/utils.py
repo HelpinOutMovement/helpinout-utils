@@ -3,6 +3,7 @@ import logging
 import lxml
 import openpyxl
 import os
+import re
 import shutil
 import zipfile
 try:
@@ -12,17 +13,19 @@ except:
     COMPRESSION = zipfile.ZIP_STORED
 
 from  constants import (
-    DEF_LOG_LEVEL, DEF_SFX, ENGLISH_COL, JSON_LANG_ROW, JSON_LOCALE_FILE_NAME,
-    JSON_ZIP_FILE_NAME, START_COL, START_ROW, XML_ATTR_STR_NAME,
-    XML_CDATA_COL, XML_KEY_COL, XML_LANG_FILE_NAME, XML_LANG_ROW,
-    XML_LANG_ENGLISH_CODE, XML_TAG_ROOT, XML_TAG_STR, XML_TRANS_COL,
-    XML_ZIP_FILE_NAME
+    DEF_LOG_LEVEL, DEF_SFX, ENGLISH_COL, FMT_SPEC_STR, JSON_LANG_ROW,
+    JSON_LOCALE_FILE_NAME, JSON_ZIP_FILE_NAME, START_COL, START_ROW,
+    XML_ATTR_STR_NAME, XML_CDATA_COL, XML_KEY_COL, XML_LANG_FILE_NAME,
+    XML_LANG_ROW, XML_LANG_ENGLISH_CODE, XML_TAG_ROOT, XML_TAG_STR,
+    XML_TRANS_COL, XML_ZIP_FILE_NAME
 )
 
 ZIPFIle_MODES = {
     zipfile.ZIP_DEFLATED: 'deflated',
     zipfile.ZIP_STORED:   'stored',
 }
+
+RE_FMT_SPEC = re.compile( FMT_SPEC_STR )
 
 class AppLangTranslate:
     suffix = DEF_SFX
@@ -122,7 +125,7 @@ class AppLangTranslate:
 
         txtL text of entry
         """
-        return '![CDATA[{}]]'.format( txt.replace( '\n', '<br/>' ) )
+        return '<![CDATA[{}]]>'.format( txt.replace( '\n', '<br/>' ) )
 
     def _col_to_json(self, column, locale_codes, locale_names, zoutp=None):
         """
@@ -166,8 +169,12 @@ class AppLangTranslate:
             english =  self.ws.cell( column=self.english_col, row=row )
             if english.value is not None:
                 cell = self.ws.cell( column=column, row=row ) 
-                key = english.value.replace( '.', '' )
-                data[key] = cell.value or english.value
+                key = re.sub(
+                    RE_FMT_SPEC, '', english.value.replace( '.', '' )
+                )
+                data[key] = re.sub(
+                    RE_FMT_SPEC, '', cell.value or english.value
+                )
 
         try:
             path = self._out_json_file_name( lang.value )
@@ -246,6 +253,15 @@ class AppLangTranslate:
             if self.stop_on_null and not name:
                 break
 
+            cell = self.ws.cell( column=column, row=row )
+            cdata = self.ws.cell(
+                column=self.xml_cdata_col, row=row
+            ).value or ''
+            if (cdata == 1 or cdata.lower() == 'yes') and not cell.value:
+                # Skip CDATA entries altogether if the language translation is
+                # missing
+                continue
+
             if translatable:
                 child = lxml.etree.SubElement( root, XML_TAG_STR, name=name )
             else:
@@ -256,11 +272,6 @@ class AppLangTranslate:
                     root, XML_TAG_STR, name=name, translatable='False'
                 )
 
-            cell = self.ws.cell( column=column, row=row ) 
-
-            cdata = self.ws.cell(
-                column=self.xml_cdata_col, row=row
-            ).value or ''
             if cdata == 1 or cdata.lower() == 'yes':
                 if cell.value:
                     child.text = self._cdata( cell.value )
