@@ -131,8 +131,8 @@ class AppLangTranslate:
         column: numeric index ofcolumn
         zoutp: either None, or a zipfile.ZipFile object. If None, the file is
                written directly to the file system
-        localee_codes: locale codes from "locale.json"
-        localee_names: locale names from "locale.json". Matchs one-to-one with
+        locale_codes: locale codes from "locale.json"
+        locale_names: locale names from "locale.json". Matchs one-to-one with
                locale_codes
         """
         lang = self.ws.cell( column=column, row=self.json_lang_row )
@@ -166,7 +166,8 @@ class AppLangTranslate:
             english =  self.ws.cell( column=self.english_col, row=row )
             if english.value is not None:
                 cell = self.ws.cell( column=column, row=row ) 
-                data[english.value] = cell.value or english.value
+                key = english.value.replace( '.', '' )
+                data[key] = cell.value or english.value
 
         try:
             path = self._out_json_file_name( lang.value )
