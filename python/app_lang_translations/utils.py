@@ -181,7 +181,7 @@ class AppLangTranslate:
                         RE_FMT_SPEC, '', english.value.replace( '.', '' )
                     )
 
-                data[key] = re.sub(
+                data[key.strip()] = re.sub(
                     RE_FMT_SPEC, '', cell.value or english.value
                 )
 
