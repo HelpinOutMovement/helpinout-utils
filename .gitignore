@@ -6,3 +6,5 @@ dist/
 build/
 __pycache__/
 HIOAppLanguages.xlsx
+android_languages.zip
+ios_languages.zip
