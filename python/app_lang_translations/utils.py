@@ -174,17 +174,7 @@ class AppLangTranslate:
                     column=self.xml_cdata_col, row=row
                 ).value or ''
 
-                key = name
-                """ Commented the below block since we always need keycolumn as JSON key for iOS  """
-                """
-                if cdata == 1 or cdata.lower() == 'yes':
-                    key = name
-                else:
-                    key = re.sub(
-                        RE_FMT_SPEC, '', english.value.replace( '.', '' )
-                    )
-                """
-                data[key.strip()] = re.sub(
+                data[name.strip()] = re.sub(
                     RE_FMT_SPEC, '', cell.value or english.value
                 )
 
