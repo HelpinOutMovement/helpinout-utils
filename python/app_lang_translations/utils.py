@@ -14,10 +14,10 @@ except:
 
 from  constants import (
     DEF_LOG_LEVEL, DEF_SFX, ENGLISH_COL, FMT_SPEC_STR, JSON_LANG_ROW,
-    JSON_LOCALE_FILE_NAME, JSON_ZIP_FILE_NAME, START_COL, START_ROW,
-    XML_ATTR_STR_NAME, XML_CDATA_COL, XML_KEY_COL, XML_LANG_FILE_NAME,
-    XML_LANG_ROW, XML_LANG_ENGLISH_CODE, XML_TAG_ROOT, XML_TAG_STR,
-    XML_TRANS_COL, XML_ZIP_FILE_NAME
+    JSON_LOCALE_FILE_NAME, JSON_ZIP_FILE_NAME, NROWS_CHECK, START_COL,
+    START_ROW, XML_ATTR_STR_NAME, XML_CDATA_COL, XML_KEY_COL,
+    XML_LANG_FILE_NAME, XML_LANG_ROW, XML_LANG_ENGLISH_CODE, XML_TAG_ROOT,
+    XML_TAG_STR, XML_TRANS_COL, XML_ZIP_FILE_NAME
 )
 
 ZIPFIle_MODES = {
@@ -149,10 +149,10 @@ class AppLangTranslate:
                     lang.value, JSON_LOCALE_FILE_NAME
                 )
         else:
-            msg = 'Missing language name at col. "{}", row "{}"'.format(
-                column, self.json_lang_row
+            msg = 'Missing language name at col. "{} ({})", row "{}"'.format(
+                openpyxl.utils.cell.get_column_letter( column ), column,
+                self.json_lang_row
             )
-            logging.error( msg )
             raise ValueError( msg )
 
         data = { 'Locale_Code': locale_name } 
@@ -226,10 +226,10 @@ class AppLangTranslate:
         """
         cell = self.ws.cell( column=column, row=self.xml_lang_row )
         if not cell.value:
-            msg = 'Missing language name at col. "{}", row "{}"'.format(
-                column, self.xml_lang_row
+            msg = 'Missing language name at col. "{} ({})", row "{}"'.format(
+                openpyxl.utils.cell.get_column_letter( column ), column,
+                self.xml_lang_row
             )
-            logging.error( msg )
             raise ValueError( msg )
 
         try:
@@ -345,6 +345,17 @@ class AppLangTranslate:
                 )
                 raise ValueError( msg )
 
+    def _col_has_data(self, col):
+        rng = range( 1, NROWS_CHECK + 1 )
+        return bool(
+            list(
+                filter(
+                    None,
+                    [self.ws.cell( column=col, row=row ).value for row in rng]
+                )
+            )
+        )
+
     def to_out(self, xml=True):
         """
         Writes output test files files
@@ -385,6 +396,16 @@ class AppLangTranslate:
             )
 
         for col in range( self.start_col, self.end_col + 1 ):
+            if not self._col_has_data( col ):
+                logging.info(
+                    'Skipping col. "{} ({}" which has no data in first '
+                    '{} rows'.format(
+                        openpyxl.utils.cell.get_column_letter( col ), col,
+                        NROWS_CHECK
+                    )
+                )
+                continue
+
             try:
                 if xml:
                     self._col_to_xml( col, zoutp=zoutp )

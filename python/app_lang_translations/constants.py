@@ -53,3 +53,6 @@ XML_ATTR_STR_NAME = "name"
 
 # Regularexpression for format specifiers
 FMT_SPEC_STR = r'%[0-9]+\$.[ ]{0,1}'
+
+# No. of rows at the beginning to check to decide if column is empty
+NROWS_CHECK = 5
