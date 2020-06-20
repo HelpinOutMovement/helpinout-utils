@@ -1,4 +1,4 @@
-# Script toconvert XLSX language translation files for HelpinOUt to the
+# Script to convert XLSX language translation files for HelpinOUt to the
 # Android XML format
 #
 # Usage:
@@ -7,7 +7,7 @@
 #     lang_file.xlsx: language translations file in HelpinOut format
 #
 # Try:
-#     python app_lang_translate.py --hel
+#     python app_lang_translate.py --help
 # for a detailed help message
 import argparse
 import logging
@@ -41,7 +41,7 @@ def _parse_command_line():
         'are written directly to the current directory, and XML files '
         'are written inside a sub-directory. By default, a .zip file of all '
         'JSON files, and all XML directories is produced.\n'
-        'Command-line options can ovrride many default settngs.'
+        'Command-line options can override many default settngs.'
     )
 
     parser.add_argument(
@@ -177,11 +177,11 @@ def main():
 
             if args.filesystem:
                 logging.info(
-                    'Wote iOS language translation files to local files'
+                    'Wrote iOS language translation files to local files'
                 )
             else:
                 logging.info(
-                    'Wote iOS language translation files to "{}"'.format(
+                    'Wrote iOS language translation files to "{}"'.format(
                         JSON_ZIP_FILE_NAME
                     )
                 )
@@ -191,12 +191,12 @@ def main():
 
             if args.filesystem:
                 logging.info(
-                    'Wote Android language translation files to local values* '
+                    'Wrote Android language translation files to local values* '
                     'directories'
                 )
             else:
                 logging.info(
-                    'Wote Android language translation files to "{}"'.format(
+                    'Wrote Android language translation files to "{}"'.format(
                         XML_ZIP_FILE_NAME
                     )
                 )
